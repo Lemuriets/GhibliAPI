@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,7 +11,13 @@ import (
 )
 
 func NewDB() *gorm.DB {
-	dsn := os.Getenv("dsn")
+	dsn := fmt.Sprintf("dbname=%s user=%s password=%s host=%s port=%s",
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+	)
 	db, err := gorm.Open(postgres.Open(dsn), &Config)
 
 	if err != nil {
@@ -20,11 +27,12 @@ func NewDB() *gorm.DB {
 }
 
 func InitDB(db *gorm.DB) error {
-	createSuperUser(db)
-	return db.AutoMigrate(
+	err := db.AutoMigrate(
 		&model.User{},
 		&model.Film{},
 	)
+	createSuperUser(db)
+	return err
 }
 
 func createSuperUser(db *gorm.DB) error {

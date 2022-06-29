@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  db:
-    container_name: db
+  ghiblidb:
+    container_name: ghiblidb
     image: postgres:13-alpine
     environment:
       - POSTGRES_USER=user
@@ -15,12 +15,16 @@ services:
   api:
     container_name: api
     build: .
-    entrypoint: ["bash", "entrypoint.sh"]
+    command: go run ./cmd/main.go
     environment: 
       - DB_USER=user
       - DB_PASSWORD=secret
       - DB_NAME=ghibliapi
-      - DB_HOST=db
+      - DB_HOST=ghiblidb
       - DB_PORT=5432
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
 
     

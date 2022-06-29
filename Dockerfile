@@ -8,4 +8,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN go get -u
+RUN go get -u ./...
